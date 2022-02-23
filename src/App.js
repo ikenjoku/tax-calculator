@@ -82,7 +82,15 @@ function App() {
             <p>
               - Total Cost:{" "}
               <strong>
-                ${ROUND(healthInsurance + socialSecurity + payrollTax)}
+                $
+                {currentGross && selectedCountry
+                  ? ROUND(
+                      ROUND(currentGross) +
+                        healthInsurance +
+                        socialSecurity +
+                        payrollTax
+                    )
+                  : 0}
               </strong>
             </p>
           </SpaceTop>
@@ -101,7 +109,10 @@ function App() {
             <p>
               - Net Salary:{" "}
               <strong>
-                ${currentGross && selectedCountry ? ROUND(currentGross - incomeTax - employeeSecurity) : 0}
+                $
+                {currentGross && selectedCountry
+                  ? ROUND(currentGross - incomeTax - employeeSecurity)
+                  : 0}
               </strong>
             </p>
           </SpaceTop>
