@@ -1,4 +1,4 @@
-# Geo-Space
+# Tax-Calculator
 
 ![license](https://img.shields.io/github/license/mashape/apistatus.svg)
 

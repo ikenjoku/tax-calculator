@@ -88,16 +88,13 @@ const defaultOutput = {
   },
 };
 
-const CaluclatorProvider = (props) => {
+const CalculatorProvider = (props) => {
   const [state, dispatch] = useReducer(TaxCalculatorReducer, initialState);
-  const [output, setOutput] = useState(defaultOutput);
-  console.log("output😎😎😎", output);
 
   const [currentGross, setCurrentGross] = useState("");
   const fetchInitialData = async () => {
     try {
       const loadedData = await fetchSheet();
-      console.log("😎😎😎", loadedData);
       const countryList = loadedData.map((calculator) => calculator.country);
       dispatch({ type: LOADED_DATA, payload: { loadedData, countryList } });
       dispatch({ type: LOADING_DATA, payload: false });
@@ -109,83 +106,42 @@ const CaluclatorProvider = (props) => {
   const selectCountry = (name) => {
     const selection = state.loadedData.find((item) => item.country === name);
     dispatch({ type: SELECT_COUNTRY, payload: { selection, name } });
-    updateOutput();
-  };
-
-  const updateOutput = () => {
-    const { selectedCalculator } = state;
-    if (!currentGross || !selectedCalculator) {
-      setOutput(defaultOutput);
-    } else {
-      const { employee, employer } = selectedCalculator;
-      const applicablePayrollBand = employer["Payroll Tax"].bands.find(
-        (bands) => currentGross >= bands.min && currentGross < bands.max
-      );
-      const applicableIncomeBand = employee["Income Tax"].bands.find(
-        (bands) => currentGross >= bands.min && currentGross < bands.max
-      );
-      const output = {
-        employer: {
-          healthInsurance:
-            (employer["Health Insurance"].percent * currentGross) / 100,
-          socialSecurity:
-            (employer["Social Security"].percent * currentGross) / 100,
-          payrollTax: (applicablePayrollBand.percent * currentGross) / 100,
-          totalCost: 0,
-        },
-        employee: {
-          socialSecurity:
-            (employee["Social Security"].percent * currentGross) / 100,
-          incomeTax: (applicableIncomeBand.percent * currentGross) / 100,
-          netSalary: 0,
-        },
-      };
-      setOutput(output);
-    }
-  };
-
-  const handleGrossChange = (value) => {
-    console.log("val", value);
-    console.log("state", state);
-    setCurrentGross(value);
-    updateOutput();
   };
 
   useEffect(() => {
     fetchInitialData();
   }, []);
 
-  const memoizedOutput = React.useMemo(() => {
+  const output = React.useMemo(() => {
     if (!currentGross || !state.selectedCalculator) {
       return defaultOutput;
     } else {
       const { employee, employer } = state.selectedCalculator;
       const applicablePayrollBand = employer["Payroll Tax"].bands.find(
-        (bands) => currentGross >= bands.min && currentGross < bands.max
+        (bands) => currentGross >= bands.min && currentGross <= bands.max
       );
       const applicableIncomeBand = employee["Income Tax"].bands.find(
-        (bands) => currentGross >= bands.min && currentGross < bands.max
+        (bands) => currentGross >= bands.min && currentGross <= bands.max
       );
-      const output = {
+      const result = {
         employer: {
           healthInsurance:
             (employer["Health Insurance"].percent * currentGross) / 100,
           socialSecurity:
             (employer["Social Security"].percent * currentGross) / 100,
-          payrollTax: (applicablePayrollBand.percent * currentGross) / 100,
+          payrollTax: (applicablePayrollBand?.percent * currentGross) / 100,
           totalCost: 0,
         },
         employee: {
           socialSecurity:
             (employee["Social Security"].percent * currentGross) / 100,
-          incomeTax: (applicableIncomeBand.percent * currentGross) / 100,
+          incomeTax: (applicableIncomeBand?.percent * currentGross) / 100,
           netSalary: 0,
         },
       };
-      return output;
+      return result;
     }
   }, [currentGross, state.selectedCalculator]);
-
 
   return (
     <TaxCalculatorContext.Provider
@@ -193,14 +149,13 @@ const CaluclatorProvider = (props) => {
         state,
         dispatch,
         selectCountry,
-        handleGrossChange,
+        handleGrossChange: setCurrentGross,
         output,
         currentGross,
-        memoizedOutput
       }}
       {...props}
     />
   );
 };
 
-export { CaluclatorProvider, useTaxCalculator, TaxCalculatorContext };
+export { CalculatorProvider, useTaxCalculator, TaxCalculatorContext };

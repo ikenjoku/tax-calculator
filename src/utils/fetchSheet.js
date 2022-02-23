@@ -5,8 +5,6 @@ const getBands = (header, values) => {
   const bandsArr = [];
   const ranges = Object.values(header).slice(start);
   const valuesForBands = Object.values(values).slice(start);
-  console.log("ranges", ranges);
-  console.log("valuesForBands", valuesForBands);
   ranges.forEach((str, i) => {
     if (str.includes("above")) {
       bandsArr.push({
@@ -88,6 +86,6 @@ export async function fetchSheet() {
     }
     return parseSheet(worksheets);
   } catch (error) {
-    console.log("Error getting sheet data", error);
+    console.error("Error getting sheet data", error);
   }
 }

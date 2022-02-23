@@ -4,14 +4,14 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { GlobalStyle } from './GlobalStyle'
-import { CaluclatorProvider } from './context/CalculatorProvider'
+import { CalculatorProvider } from './context/CalculatorProvider'
 
 ReactDOM.render(
   <React.StrictMode>
-    <CaluclatorProvider>
+    <CalculatorProvider>
       <GlobalStyle />
       <App />
-    </CaluclatorProvider>
+    </CalculatorProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
