@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 import { actions } from "./CalculatorProvider.actions";
-import { fetchSheet } from "../utils";
+import { fetchSheet, getTaxByBands } from "../utils";
 import { useState } from "react";
 
 const {
@@ -117,25 +117,22 @@ const CalculatorProvider = (props) => {
       return defaultOutput;
     } else {
       const { employee, employer } = state.selectedCalculator;
-      const applicablePayrollBand = employer["Payroll Tax"].bands.find(
-        (bands) => currentGross >= bands.min && currentGross <= bands.max
-      );
-      const applicableIncomeBand = employee["Income Tax"].bands.find(
-        (bands) => currentGross >= bands.min && currentGross <= bands.max
-      );
+      const applicablePayrollTax = getTaxByBands(employer["Payroll Tax"].bands, currentGross);
+      const applicableIncomeTax = getTaxByBands(employee["Income Tax"].bands, currentGross);
+
       const result = {
         employer: {
           healthInsurance:
             (employer["Health Insurance"].percent * currentGross) / 100,
           socialSecurity:
             (employer["Social Security"].percent * currentGross) / 100,
-          payrollTax: (applicablePayrollBand?.percent * currentGross) / 100,
+          payrollTax: applicablePayrollTax,
           totalCost: 0,
         },
         employee: {
           socialSecurity:
             (employee["Social Security"].percent * currentGross) / 100,
-          incomeTax: (applicableIncomeBand?.percent * currentGross) / 100,
+          incomeTax: applicableIncomeTax,
           netSalary: 0,
         },
       };
