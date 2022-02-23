@@ -8,23 +8,23 @@ import {
   SpaceTop,
   SpaceBottom,
   InputField,
+  Employee,
 } from "./components/styles";
 
 const ROUND = Math.round;
 
 function App() {
   const {
-    // output,
-    memoizedOutput,
+    output,
     currentGross,
     selectCountry,
     handleGrossChange,
-    state: { loadingData, countryList },
+    state: { loadingData, countryList, selectedCountry },
   } = useTaxCalculator();
   const {
     employer: { healthInsurance, socialSecurity, payrollTax },
     employee: { socialSecurity: employeeSecurity, incomeTax },
-  } = memoizedOutput;
+  } = output;
 
   if (loadingData)
     return (
@@ -87,7 +87,7 @@ function App() {
             </p>
           </SpaceTop>
         </div>
-        <div>
+        <Employee>
           <SpaceBottom>Employee taxes</SpaceBottom>
           <div>
             <p>
@@ -101,11 +101,11 @@ function App() {
             <p>
               - Net Salary:{" "}
               <strong>
-                ${ROUND(currentGross - incomeTax - employeeSecurity)}
+                ${currentGross && selectedCountry ? ROUND(currentGross - incomeTax - employeeSecurity) : 0}
               </strong>
             </p>
           </SpaceTop>
-        </div>
+        </Employee>
       </Output>
     </div>
   );

@@ -72,3 +72,9 @@ export const Output = styled.section`
     flex-direction: column;
   }
 `;
+
+export const Employee = styled.section`
+  @media (max-width: 700px) {
+    margin-top: 24px;
+  }
+`;
